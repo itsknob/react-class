@@ -22,7 +22,8 @@ passport.use(
     new GoogleStrategy({
         clientID: keys.googleClientID,
         clientSecret: keys.googleClientSecret,
-        callbackURL: '/auth/google/callback'
+        callbackURL: '/auth/google/callback',    // relative path translates to http not https
+        proxy: true
     }, (accessToken, refreshToken, profile, done) => {
         // console.log("profile", profile);
         // Grab profile data from authorized user.
