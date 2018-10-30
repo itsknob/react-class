@@ -24,20 +24,16 @@ passport.use(
         clientSecret: keys.googleClientSecret,
         callbackURL: '/auth/google/callback',    // relative path translates to http not https
         proxy: true
-    }, (accessToken, refreshToken, profile, done) => {
-        // console.log("profile", profile);
+    }, 
+    async (accessToken, refreshToken, profile, done) => {
         // Grab profile data from authorized user.
-        User.findOne({googleId: profile.id})
-            .then( (existingUser) => {
-                if(existingUser) {
-                    // done(error, user);
-                    done(null, existingUser);
-                }
-                else{
-                    new User({ googleId: profile.id })      // create user
-                        .save()                             // persist in db
-                        .then(user => done(null, user));    // done
-                }
-            });
+        const existingUser = await User.findOne({googleId: profile.id})
+
+        if(existingUser) {
+            return done(null, existingUser);
+        }
+
+        const user = await new User({ googleId: profile.id }).save()
+        done(null, user);
     })
 );
